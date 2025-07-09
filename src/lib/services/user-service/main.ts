@@ -1,5 +1,6 @@
 import supabase from '../supabaseInit';
-import UserStore from '../../store/userStore';
+
+// import supabase from '$lib/utils/supabaseInit';
 
 class UserService {
 	async createUser(
@@ -10,13 +11,13 @@ class UserService {
 		userType: UserType
 	) {
 		const { data, error } = await supabase
-			.from('Users')
+			.from('users')
 			.insert({
 				id,
 				fullName: fullname,
 				email,
 				phoneNumber,
-				userType,
+				userType
 			})
 			.select('*')
 			.single();
@@ -24,20 +25,17 @@ class UserService {
 		if (error) {
 			throw new Error(error.message);
 		}
-		const userStore = UserStore.getInstance();
-		userStore.initialize({
-			id: data.id,
-			fullName: data.fullName,
-			email: data.email,
-			dateOfBirth: data.dateOfBirth || '',
-			country: data.country || '',
-			region: data.region || '',
-			countryCode: data.countryCode || '',
-			phoneNumber: data.phoneNumber || '',
-			profileImageUrl: data.profileImageUrl || '',
-			userType: data.userType,
-		});
+
 		return { success: true, data };
+	}
+
+	async getUser(id: string) {
+		const { data, error } = await supabase.from('users').select('*').eq('id', id).single(); // ensures you get one object instead of an array
+		if (error) {
+			throw new Error(`Failed to fetch user: ${error}`);
+		}
+
+		return data;
 	}
 }
 

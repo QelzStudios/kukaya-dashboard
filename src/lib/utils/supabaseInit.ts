@@ -8,7 +8,7 @@ async function testConnection() {
 	try {
 		console.log('👋 Testing Supabase connection...');
 		const { error } = await supabase
-			.from('Users') // Replace with your real table name
+			.from('users') // Replace with your real table name
 			.select('*')
 			.limit(1);
 

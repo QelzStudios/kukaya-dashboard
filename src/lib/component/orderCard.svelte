@@ -1,16 +1,26 @@
 <script>
+	import OrderService from '$lib/services/order_service/main';
 	export let order;
 
 	let isDelivered = order.delivered || false;
-
+	let isDeleted = false;
 	const handleConfirm = () => {
 		alert(`Order ${order.orderNumber} confirmed.`);
 	};
 
-	const handleRevoke = () => {
-		alert(`Order ${order.orderNumber} revoked.`);
+	const handleRevoke = async () => {
+		const confirmed = confirm(`Are you sure you want to revoke Order ${order.orderNumber}?`);
+		if (!confirmed) return;
+
+		await OrderService.deleteOrder(order.id);
+
+		alert(`✅ Order ${order.orderNumber} revoked.`);
+		isDeleted = true;
 	};
 
+	/**
+	 * @param {string | number | Date} dateStr
+	 */
 	function formatDate(dateStr) {
 		const date = new Date(dateStr);
 		return date.toLocaleDateString(undefined, {
@@ -31,6 +41,7 @@
 	class:bg-white={!isDelivered}
 	class:border-green-400={isDelivered}
 	class:border-gray-200={!isDelivered}
+	class:hidden={isDeleted}
 >
 	<div class="mb-4 flex gap-3 sm:flex-row sm:items-start sm:justify-between">
 		<div class="sm:w-[90%] md:w-auto">
@@ -79,9 +90,13 @@
 	</div>
 
 	<div class="mb-3 space-y-1 text-sm text-gray-700">
-		<p><strong>Shipping Cost:</strong> ${order.shippingCost.toFixed(2)}</p>
 		<p>
-			<strong>Grand Total:</strong> ${order.grandTotal.toLocaleString(undefined, {
+			<strong>Shipping Cost:</strong> TSh {order.shippingCost.toLocaleString(undefined, {
+				minimumFractionDigits: 2
+			})}
+		</p>
+		<p>
+			<strong>Grand Total:</strong> TSh {order.grandTotal.toLocaleString(undefined, {
 				minimumFractionDigits: 2
 			})}
 		</p>

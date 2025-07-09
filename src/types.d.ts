@@ -30,7 +30,7 @@ type User = {
 	country?: string;
 	region?: string;
 	countryCode?: string;
-	phoneNumber?: string;
+	phoneNumber: string;
 	profileImageUrl?: string;
 	userType: UserType;
 	createdAt: string; // ISO timestamp string

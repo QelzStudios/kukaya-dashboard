@@ -1,87 +1,30 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import OrderCard from '$lib/component/orderCard.svelte';
+	import { onMount } from 'svelte';
 	import AuthService from '../../lib/services/auth-service/main';
-	const orders = [
-		{
-			orderNumber: 'ORD-4567',
-			customerNumber: 'CUST-1234',
-			customerName: 'Ama Serwaa',
-			shippingCost: 10.5,
-			grandTotal: 250.75,
-			orderedAt: '2025-07-02T14:00:00Z',
-			delivered: false,
-			items: [
-				{ name: 'Laptop Bag', quantity: 1 },
-				{ name: 'Wireless Mouse', quantity: 2 }
-			]
-		},
-		{
-			orderNumber: 'ORD-4567',
-			customerNumber: 'CUST-1234',
-			customerName: 'Ama Serwaa',
-			shippingCost: 10.5,
-			grandTotal: 250.75,
-			orderedAt: '2025-07-02T14:00:00Z',
-			delivered: false,
-			items: [
-				{ name: 'Laptop Bag', quantity: 1 },
-				{ name: 'Wireless Mouse', quantity: 2 }
-			]
-		},
-		{
-			orderNumber: 'ORD-4567',
-			customerNumber: 'CUST-1234',
-			customerName: 'Ama Serwaa',
-			shippingCost: 10.5,
-			grandTotal: 250.75,
-			orderedAt: '2025-07-02T14:00:00Z',
-			delivered: false,
-			items: [
-				{ name: 'Laptop Bag', quantity: 1 },
-				{ name: 'Wireless Mouse', quantity: 2 }
-			]
-		},
-		{
-			orderNumber: 'ORD-4567',
-			customerNumber: 'CUST-1234',
-			customerName: 'Ama Serwaa',
-			shippingCost: 10.5,
-			grandTotal: 250.75,
-			orderedAt: '2025-07-02T14:00:00Z',
-			delivered: false,
-			items: [
-				{ name: 'Laptop Bag', quantity: 1 },
-				{ name: 'Wireless Mouse', quantity: 2 }
-			]
-		},
-		{
-			orderNumber: 'ORD-4567',
-			customerNumber: 'CUST-1234',
-			customerName: 'Ama Serwaa',
-			shippingCost: 10.5,
-			grandTotal: 250.75,
-			orderedAt: '2025-07-02T14:00:00Z',
-			delivered: false,
-			items: [
-				{ name: 'Laptop Bag', quantity: 1 },
-				{ name: 'Wireless Mouse', quantity: 2 }
-			]
-		},
-		{
-			orderNumber: 'ORD-4567',
-			customerNumber: 'CUST-1234',
-			customerName: 'Ama Serwaa',
-			shippingCost: 10.5,
-			grandTotal: 250.75,
-			orderedAt: '2025-07-02T14:00:00Z',
-			delivered: false,
-			items: [
-				{ name: 'Laptop Bag', quantity: 1 },
-				{ name: 'Wireless Mouse', quantity: 2 }
-			]
-		}
-	];
+	import OrderService from '../../lib/services/order_service/main';
+	import { generateOrderSummary, type OrderSummary } from '$lib/utils/orderTransformer';
+	import orderStore from '$lib/stores/orderStore.svelte';
+
+	let orders: OrderSummary[] = $state([]);
+
+	onMount(async () => {
+		try {
+			const { data } = await OrderService.getOrders();
+			const i = await OrderService.realTimeChanges();
+			data.forEach(async (element) => {
+				const sum = await generateOrderSummary(element);
+
+				orderStore.push(sum);
+			});
+		} catch (error) {}
+	});
+
+	$effect(() => {
+		orders = orderStore;
+	});
+
 	async function signOut() {
 		await AuthService.signOut();
 		goto('/');

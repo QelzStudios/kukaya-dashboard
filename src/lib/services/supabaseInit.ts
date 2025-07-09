@@ -12,9 +12,6 @@ async function testConnection() {
 			.select('*')
 			.limit(1);
 
-		console.log('📦 Data:', data);
-		console.log('⚠️ Error:', error);
-
 		if (error) {
 			console.error('❌ Supabase query error:', JSON.stringify(error, null, 2));
 		} else {
