@@ -1,6 +1,7 @@
 import UserService from '$lib/services/user-service/main';
 import type { NewOrder } from '$lib/stores/orderStore.svelte';
 import exchangeRate from './exchangeRate';
+import exchangeRates from './exchangeRates';
 import extractNumber from './extractNumber';
 import platformPrricer from './platformPrricer';
 
@@ -28,12 +29,11 @@ export async function generateOrderSummary(order: NewOrder): Promise<OrderSummar
 
 	// Calculate total item cost
 	const itemTotal = cart.cartListings.reduce((sum, item) => {
-		const dor = extractNumber(platformPrricer(item.price));
-		const tsh: number = exchangeRate(dor, true) as number;
-		return sum + tsh * item.qty;
+		const dor = item.price;
+		return sum + dor * item.qty;
 	}, 0);
 
-	const shippingCost = cart.shipping;
+	const shippingCost = exchangeRates.convertToTSh(cart.shipping);
 	const grandTotal = itemTotal + shippingCost;
 
 	return {

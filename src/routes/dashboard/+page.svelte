@@ -6,6 +6,7 @@
 	import OrderService from '../../lib/services/order_service/main';
 	import { generateOrderSummary, type OrderSummary } from '$lib/utils/orderTransformer';
 	import orderStore from '$lib/stores/orderStore.svelte';
+	import logger from '$lib/utils/sentry';
 
 	let orders: OrderSummary[] = $state([]);
 
@@ -18,7 +19,9 @@
 
 				orderStore.push(sum);
 			});
-		} catch (error) {}
+		} catch (error) {
+			logger.captureException(error);
+		}
 	});
 
 	$effect(() => {

@@ -1,5 +1,6 @@
 <script>
 	import OrderService from '$lib/services/order_service/main';
+	import logger from '$lib/utils/sentry';
 	export let order;
 
 	let isDelivered = order.delivered || false;
@@ -9,13 +10,17 @@
 	};
 
 	const handleRevoke = async () => {
-		const confirmed = confirm(`Are you sure you want to revoke Order ${order.orderNumber}?`);
-		if (!confirmed) return;
+		try {
+			const confirmed = confirm(`Are you sure you want to revoke Order ${order.orderNumber}?`);
+			if (!confirmed) return;
 
-		await OrderService.deleteOrder(order.id);
+			await OrderService.deleteOrder(order.id);
 
-		alert(`✅ Order ${order.orderNumber} revoked.`);
-		isDeleted = true;
+			alert(`✅ Order ${order.orderNumber} revoked.`);
+			isDeleted = true;
+		} catch (error) {
+			logger.captureException(error);
+		}
 	};
 
 	/**

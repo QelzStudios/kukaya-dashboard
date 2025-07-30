@@ -1,7 +1,7 @@
 export default function convertDollarToCurrency(
 	amountInDollars: number,
 	type?: boolean,
-	exchangeRate: number = 2655.38
+	exchangeRate: number = 25611
 ) {
 	const converted = amountInDollars * exchangeRate;
 	// Round up to 2 decimal places

@@ -3,6 +3,7 @@
 	import { EyeSlashOutline, EyeOutline } from 'flowbite-svelte-icons';
 	import AuthService from '../lib/services/auth-service/main';
 	import { goto } from '$app/navigation';
+	import logger from '$lib/utils/sentry';
 
 	let email = $state('');
 	let password = $state('');
@@ -18,6 +19,8 @@
 			if (isAuth) processing = false;
 			goto('/dashboard');
 		} catch (error) {
+			logger.captureException(error);
+
 			const err = error as Error;
 			processing = false;
 			errorMessage = err.message;
