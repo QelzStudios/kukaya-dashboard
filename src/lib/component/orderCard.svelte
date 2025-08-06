@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 	import OrderService from '$lib/services/order_service/main';
 	import logger from '$lib/utils/sentry';
+	import { span } from 'flowbite-svelte';
 	export let order;
 
 	let isDelivered = order.delivered || false;
@@ -111,7 +112,27 @@
 		<h3 class="mb-1 text-sm font-semibold text-gray-800">Items Ordered:</h3>
 		<ul class="list-disc space-y-1 pl-5 text-sm text-gray-600">
 			{#each order.items as item}
-				<li>{item.name} × {item.quantity}</li>
+				<li class="group relative">
+					{item.name} × {item.quantity}
+
+					<!-- Business details (initially hidden, shown on hover) -->
+					<ul
+						class="absolute top-full left-0 z-10 hidden w-max rounded-md bg-green-200 p-2 text-sm text-gray-800 group-hover:block"
+					>
+						<li>
+							Business name:
+							<span class="px-0.5 font-bold">{item.busyDetails.businessName}</span>
+						</li>
+						<li>
+							Business email:
+							<span class="px-0.5 font-bold">{item.busyDetails.email}</span>
+						</li>
+						<li>
+							Phone number:
+							<span class="px-0.5 font-bold">{item.busyDetails.phoneNumber}</span>
+						</li>
+					</ul>
+				</li>
 			{/each}
 		</ul>
 	</div>

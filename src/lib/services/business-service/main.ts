@@ -1,5 +1,6 @@
 import supabase from '../supabaseInit';
-import BusinessStore from '~/store/businessStore';
+import UserService from '../user-service/main';
+import ProductService from '../product_service/main';
 
 class BusinessService {
 	async createBusiness(
@@ -10,7 +11,7 @@ class BusinessService {
 			.from('business_profiles')
 			.insert({
 				businessName,
-				userId,
+				userId
 			})
 			.select('*')
 			.single();
@@ -18,15 +19,24 @@ class BusinessService {
 		if (error) {
 			throw new Error(error.message);
 		}
-
 		// Initialize business store
-		BusinessStore.getInstance().initialize({
-			businessId: data.businessId,
-			userId: data.userId,
-			businessName: data.businessName,
-		});
-
 		return { success: true, data };
+	}
+	async getBusinessDetailsFromProductId(productId: string) {
+		const { success, data } = await ProductService.getProducts(productId);
+		const product = data[0];
+		if (product) {
+			const { data, error } = await supabase
+				.from('business_profiles')
+				.select(`*, users (*) `)
+				.eq('businessId', product.businessId);
+			if (!error) {
+				return data[0];
+			}
+		}
+		return null;
+
+		// console.log({ data, error });
 	}
 }
 

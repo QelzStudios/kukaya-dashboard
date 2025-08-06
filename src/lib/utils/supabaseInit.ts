@@ -7,10 +7,7 @@ const supabase = createClient(
 async function testConnection() {
 	try {
 		console.log('👋 Testing Supabase connection...');
-		const { error } = await supabase
-			.from('users') // Replace with your real table name
-			.select('*')
-			.limit(1);
+		const { error } = await supabase.from('users').select('*').limit(1);
 
 		console.log('✅ Supabase is reachable and query succeeded!');
 	} catch (e) {

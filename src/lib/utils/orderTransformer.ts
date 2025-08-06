@@ -1,4 +1,5 @@
 import UserService from '$lib/services/user-service/main';
+import BusinessService from '$lib/services/business-service/main';
 import type { NewOrder } from '$lib/stores/orderStore.svelte';
 import exchangeRate from './exchangeRate';
 import exchangeRates from './exchangeRates';
@@ -22,10 +23,26 @@ export async function generateOrderSummary(order: NewOrder): Promise<OrderSummar
 
 	// Fetch user details from userService
 	const user: User = await UserService.getUser(buyerId);
-	const items = cart.cartListings.map((item) => ({
+	let items = cart.cartListings.map((item) => ({
 		name: item.name,
-		quantity: item.qty
+		quantity: item.qty,
+		id: item.id
 	}));
+
+	// Fetch all business details in parallel
+	const busyDetailsList = await Promise.all(
+		items.map(async (i) => {
+			const busyDetails = await BusinessService.getBusinessDetailsFromProductId(i.id);
+			return {
+				...i,
+				busyDetails: {
+					businessName: busyDetails.businessName,
+					email: busyDetails.users.email,
+					phoneNumber: busyDetails.users.phoneNumber
+				}
+			};
+		})
+	);
 
 	// Calculate total item cost
 	const itemTotal = cart.cartListings.reduce((sum, item) => {
@@ -44,7 +61,7 @@ export async function generateOrderSummary(order: NewOrder): Promise<OrderSummar
 		grandTotal,
 		orderedAt: new Date().toISOString(), // or pass explicitly
 		delivered: false, // hardcoded for now — add field if needed
-		items,
+		items: busyDetailsList,
 		id
 	};
 }

@@ -16,7 +16,7 @@
 			const i = await OrderService.realTimeChanges();
 			data.forEach(async (element) => {
 				const sum = await generateOrderSummary(element);
-
+				console.log({ sum });
 				orderStore.push(sum);
 			});
 		} catch (error) {
