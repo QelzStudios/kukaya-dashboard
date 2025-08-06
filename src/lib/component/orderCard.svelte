@@ -42,7 +42,7 @@
 </script>
 
 <div
-	class="w-full max-w-full rounded-2xl border p-4 shadow-lg transition hover:shadow-xl sm:p-6"
+	class="w-full max-w-full shrink-0 rounded-2xl border p-4 shadow-lg transition hover:shadow-xl sm:p-6"
 	class:bg-green-100={isDelivered}
 	class:bg-white={!isDelivered}
 	class:border-green-400={isDelivered}
