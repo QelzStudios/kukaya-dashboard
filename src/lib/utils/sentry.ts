@@ -8,5 +8,5 @@ Sentry.init({
 });
 const productionLogger = Sentry;
 const dev = { captureException: console.log };
-logger = productionLogger;
+logger = dev;
 export default logger;

@@ -47,11 +47,12 @@ export async function generateOrderSummary(order: NewOrder): Promise<OrderSummar
 	// Calculate total item cost
 	const itemTotal = cart.cartListings.reduce((sum, item) => {
 		const dor = item.price;
+
 		return sum + dor * item.qty;
 	}, 0);
 
 	const shippingCost = exchangeRates.convertToTSh(cart.shipping);
-	const grandTotal = itemTotal + shippingCost;
+	const grandTotal = exchangeRates.convertToTSh(itemTotal) + shippingCost;
 
 	return {
 		orderNumber: cart.orderId,
